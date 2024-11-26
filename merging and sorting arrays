@@ -1,0 +1,60 @@
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+function mergeArrays(list1, list2, sortOrder = 'asc') {
+  const sortedList1 = list1.slice().sort((x, y) => (sortOrder === 'asc' ? x - y : y - x));
+  const sortedList2 = list2.slice().sort((x, y) => (sortOrder === 'asc' ? x - y : y - x));
+
+  const mergedList = [];
+  let pointer1 = 0;
+  let pointer2 = 0;
+
+  const compareValues = (val1, val2) => (sortOrder === 'asc' ? val1 < val2 : val1 > val2);
+
+  while (pointer1 < sortedList1.length && pointer2 < sortedList2.length) {
+    if (compareValues(sortedList1[pointer1], sortedList2[pointer2])) {
+      mergedList.push(sortedList1[pointer1]);
+      pointer1++;
+    } else {
+      mergedList.push(sortedList2[pointer2]);
+      pointer2++;
+    }
+  }
+
+  while (pointer1 < sortedList1.length) {
+    mergedList.push(sortedList1[pointer1]);
+    pointer1++;
+  }
+
+  while (pointer2 < sortedList2.length) {
+    mergedList.push(sortedList2[pointer2]);
+    pointer2++;
+  }
+
+  return mergedList;
+}
+
+rl.question('Введіть перший список (через кому): ', (input1) => {
+  const list1 = input1.split(',').map(Number);
+
+  rl.question('Введіть другий список (через кому): ', (input2) => {
+    const list2 = input2.split(',').map(Number);
+
+    rl.question('Виберіть напрям сортування (asc/desc): ', (sortOrder) => {
+      if (sortOrder !== 'asc' && sortOrder !== 'desc') {
+        console.log('Невірний напрям сортування. Спробуйте знову.');
+        rl.close();
+        return;
+      }
+
+      const result = mergeArrays(list1, list2, sortOrder);
+      console.log(`Результат сортування (${sortOrder}):`, result);
+
+      rl.close();
+    });
+  });
+});
